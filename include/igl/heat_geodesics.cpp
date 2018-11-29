@@ -63,7 +63,8 @@ IGL_INLINE bool igl::heat_geodesics_precompute(
   // number of gradient components
   data.ng = data.Grad.rows() / F.rows();
   assert(data.ng == 3 || data.ng == 2);
-  data.Div = -0.25*data.Grad.transpose()*dblA.replicate(data.ng,1).asDiagonal();
+  VectorXS replicatedDoubleA = dblA.replicate(data.ng,1);
+  data.Div = -0.25*data.Grad.transpose()*replicatedDoubleA.asDiagonal();
 
   Eigen::SparseMatrix<Scalar> Q = M - t*L;
   Eigen::MatrixXi O;
@@ -85,7 +86,7 @@ IGL_INLINE bool igl::heat_geodesics_precompute(
       }
     }
     const Eigen::SparseMatrix<double> Aeq = M.diagonal().transpose().sparseView();
-    if(!igl::min_quad_with_fixed_precompute(
+    if(!igl::min_quad_with_fixed_precompute<double>(
       (-L*0.5).eval(),Eigen::VectorXi(),Aeq,true,data.Poisson))
     {
       return false;
@@ -117,7 +118,7 @@ IGL_INLINE void igl::heat_geodesics_solve(
     // Average Dirichelt and Neumann solutions
     DerivedD uD;
     igl::min_quad_with_fixed_solve(
-      data.Dirichlet,u0,DerivedD::Zero(data.b.size()),DerivedD(),uD);
+      data.Dirichlet,u0,DerivedD::Zero(data.b.size()).eval(),DerivedD(),uD);
     u += uD;
     u *= 0.5;
   }
@@ -141,7 +142,7 @@ IGL_INLINE void igl::heat_geodesics_solve(
   }
   const DerivedD div_X = -data.Div*grad_u;
   const DerivedD Beq = (DerivedD(1,1)<<0).finished();
-  igl::min_quad_with_fixed_solve(data.Poisson,-2.0*div_X,DerivedD(),Beq,D);
+  igl::min_quad_with_fixed_solve(data.Poisson,(-2.0*div_X).eval(),DerivedD(),Beq,D);
   DerivedD Dgamma;
   igl::slice(D,gamma,Dgamma);
   D.array() -= Dgamma.mean();

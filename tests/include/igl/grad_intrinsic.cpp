@@ -22,8 +22,9 @@ TEST_CASE("grad_intrinsic: laplace_grid", "[igl]")
   igl::grad_intrinsic(l,F,G);
   Eigen::VectorXd dblA;
   igl::doublearea(l,0,dblA);
+  auto dblAReplicated = dblA.replicate(2,1).eval();
   Eigen::SparseMatrix<double> GTAG = 
-    G.transpose() * (dblA.replicate(2,1).asDiagonal()) * G;
+    G.transpose() * (dblAReplicated.asDiagonal()) * G;
   test_common::assert_near(
     Eigen::MatrixXd(L),Eigen::MatrixXd(-0.5*GTAG),igl::EPS<double>());
 }
