@@ -722,6 +722,11 @@ namespace glfw
       // for igl::trackball and igl::two_axis_valuator_fixed_up
       int width_window, height_window;
       glfwGetWindowSize(window, &width_window, &height_window);
+      int viewport_down_mouse_x = down_mouse_x - core().viewport(0);
+      int viewport_down_mouse_y = down_mouse_y - (height_window - core().viewport(1) - core().viewport(3));
+      int viewport_mouse_x = mouse_x - core().viewport(0);
+      int viewport_mouse_y = mouse_y - (height_window - core().viewport(1) - core().viewport(3));
+
       switch (mouse_mode)
       {
         case MouseMode::Rotation:
@@ -738,10 +743,10 @@ namespace glfw
                 core().viewport(3),
                 2.0f,
                 down_rotation,
-                down_mouse_x - core().viewport(0),
-                down_mouse_y - (height_window - core().viewport(1) - core().viewport(3)),
-                mouse_x - core().viewport(0),
-                mouse_y - (height_window - core().viewport(1) - core().viewport(3)),
+                viewport_down_mouse_x,
+                viewport_down_mouse_y,
+                viewport_mouse_x,
+                viewport_mouse_y,
                 core().trackball_angle);
               break;
             case ViewerCore::ROTATION_TYPE_TWO_AXIS_VALUATOR_FIXED_UP:
@@ -749,10 +754,10 @@ namespace glfw
                 core().viewport(2),core().viewport(3),
                 2.0,
                 down_rotation,
-                down_mouse_x - core().viewport(0),
-                down_mouse_y - (height_window - core().viewport(1) - core().viewport(3)),
-                mouse_x - core().viewport(0),
-                mouse_y - (height_window - core().viewport(1) - core().viewport(3)),
+                viewport_down_mouse_x,
+                viewport_down_mouse_y,
+                viewport_mouse_x,
+                viewport_mouse_y,
                 core().trackball_angle);
               break;
           }
@@ -764,8 +769,8 @@ namespace glfw
         case MouseMode::Translation:
         {
           //translation
-          Eigen::Vector3f pos1 = igl::unproject(Eigen::Vector3f(mouse_x, core().viewport[3] - mouse_y, down_mouse_z), core().view, core().proj, core().viewport);
-          Eigen::Vector3f pos0 = igl::unproject(Eigen::Vector3f(down_mouse_x, core().viewport[3] - down_mouse_y, down_mouse_z), core().view, core().proj, core().viewport);
+          Eigen::Vector3f pos1 = igl::unproject(Eigen::Vector3f(viewport_mouse_x, core().viewport[3] - viewport_mouse_y, down_mouse_z), core().view, core().proj, core().viewport);
+          Eigen::Vector3f pos0 = igl::unproject(Eigen::Vector3f(viewport_down_mouse_x, core().viewport[3] - viewport_down_mouse_y, down_mouse_z), core().view, core().proj, core().viewport);
 
           Eigen::Vector3f diff = pos1 - pos0;
           core().camera_translation = down_translation + Eigen::Vector3f(diff[0],diff[1],diff[2]);
