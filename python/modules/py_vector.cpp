@@ -641,7 +641,9 @@ void python_export_vector(py::module &m) {
     //py::implicitly_convertible<double, Eigen::MatrixXi>();
 
     /* Bindings for MatrixXb */
-    bind_eigen_2<Eigen::Matrix<bool,Eigen::Dynamic,Eigen::Dynamic> > (me, "MatrixXb");
+    // Unfortunately Binding Matrix triggers a bunch of static assertions in newer versions
+    // of Eigen about mixed numeric types (due to the arithmetic operations).
+    // bind_eigen_2<Eigen::Matrix<bool,Eigen::Dynamic,Eigen::Dynamic> > (me, "MatrixXb");
 
     /* Bindings for MatrixXuc */
     bind_eigen_2<Eigen::Matrix<unsigned char,Eigen::Dynamic,Eigen::Dynamic> > (me, "MatrixXuc");
