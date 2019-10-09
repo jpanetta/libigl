@@ -81,7 +81,6 @@ public:
     Eigen::Matrix<unsigned char,Eigen::Dynamic,Eigen::Dynamic>& B,
     Eigen::Matrix<unsigned char,Eigen::Dynamic,Eigen::Dynamic>& A);
 
-  // Trackball angle (quaternion)
   enum RotationType
   {
     ROTATION_TYPE_TRACKBALL = 0,
@@ -104,6 +103,7 @@ public:
   float lighting_factor;
 
   RotationType rotation_type;
+  // Trackball angle (quaternion)
   Eigen::Quaternionf trackball_angle;
 
   // Camera parameters

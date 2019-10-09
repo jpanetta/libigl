@@ -68,6 +68,7 @@ target_include_directories(igl_common SYSTEM INTERFACE
 set_property(TARGET igl_common PROPERTY EXPORT_NAME igl::common)
 if(LIBIGL_USE_STATIC_LIBRARY)
   target_compile_definitions(igl_common INTERFACE -DIGL_STATIC_LIBRARY)
+  target_compile_options(igl_common INTERFACE -fvisibility=hidden)
 endif()
 
 # Transitive C++11 flags
